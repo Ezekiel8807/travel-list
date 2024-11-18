@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
 
-function App() {
+// components
+import Logo from "./components/Logo";
+import Form from "./components/Form";
+import Stats from "./components/Stats";
+import PackageList from "./components/PackageList";
+
+export default function App() {
+  const [itemArr, setItemArr] = useState([]);
+
+  const addNewItem = (newItem) => {
+    setItemArr((itemArr) => [...itemArr, newItem]);
+  };
+
+  const deleteItem = (itemId) => {
+    const filterArr = itemArr.filter((e) => e.id !== itemId);
+    setItemArr((itemArr) => [...filterArr]);
+  };
+
+  const packedItem = (itemId) => {
+    setItemArr((itemArr) =>
+      itemArr.map((i) => (i.id === itemId ? { ...i, packed: !i.packed } : i))
+    );
+  };
+
+  const clearItemArr = () => {
+    if (itemArr.length < 1) return;
+
+    const confirm = window.confirm(
+      "Are you sure, you want to clear your items list?"
+    );
+
+    if (confirm) setItemArr([]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Logo />
+      <Form onAddNewItem={addNewItem} />
+      <PackageList
+        itemArr={itemArr}
+        onDeleteItem={deleteItem}
+        onPacked={packedItem}
+        onClearItemArr={clearItemArr}
+      />
+      <Stats itemArr={itemArr} />
     </div>
   );
 }
-
-export default App;
